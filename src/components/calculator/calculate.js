@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
+import { loanPurpose, loanTermData, interestRateData } from "./variables/data";
+
+const incrementedValue = 10000;
 
 function Calculate({onCalculate}) {
+    const [loanPurpose_, setLoanPurpose_] = useState(true);
+
     const [formData, setFormData] = useState({
         loanAmount: '',
-        loanPurpose: '',
+        loanPurpose: loanPurpose()?.[0],
         purchasePrice: '',
-        loanTerm: '',
-        interestRate: '',
+        appraisedValue: '',
+        loanTerm: loanTermData()?.[0],
+        interestRate: interestRateData()?.[0],
         propertyTax: '',
         insurance: ''
     });
@@ -116,114 +122,145 @@ function Calculate({onCalculate}) {
                 amortizationSchedule: null
             });
         }
+
+        // on change loan purpose
+        setLoanPurpose_(formData.loanPurpose);
     }, [formData]);
 
     return <>
         <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200">
             <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">Assumptions</h1>
             <form className="space-y-6">
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                    <label htmlFor="loan-amount" className="block text-sm font-medium text-gray-600">Loan Amount</label>
-                    <input
-                        type="number"
-                        id="loan-amount"
-                        name="loanAmount"
-                        value={formData.loanAmount}
-                        onChange={handleChange}
-                        step="0.01"
-                        placeholder="Enter loan amount"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                        required
-                    />
+                <div className="bgFormField p-4 rounded-lg shadow-sm">
+                    <label htmlFor="loan-amount" className="block text-sm font-medium text-gray-600">
+                        Loan Amount
+                    </label>
+                    <div className="relative mt-1 flex items-center">
+                        <input
+                            type="number"
+                            id="loan-amount"
+                            name="loanAmount"
+                            value={formData.loanAmount}
+                            onChange={handleChange}
+                            step={incrementedValue}
+                            placeholder="Enter loan amount"
+                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                            required
+                        />
+                    </div>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div className="bgFormField p-4 rounded-lg shadow-sm">
                     <label htmlFor="loan-purpose" className="block text-sm font-medium text-gray-600">Loan Purpose</label>
-                    <input
-                        type="text"
+                    <select
                         id="loan-purpose"
                         name="loanPurpose"
                         value={formData.loanPurpose}
                         onChange={handleChange}
-                        placeholder="Enter loan purpose"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                        className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                         required
-                    />
+                    >
+                        {loanPurpose()?.map((item) => (<option value={item}>{item}</option>))}
+                    </select>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                    <label htmlFor="purchase-price" className="block text-sm font-medium text-gray-600">Purchase Price</label>
-                    <input
-                        type="number"
-                        id="purchase-price"
-                        name="purchasePrice"
-                        value={formData.purchasePrice}
-                        onChange={handleChange}
-                        step="0.01"
-                        placeholder="Enter purchase price"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                        required
-                    />
-                </div>
+                {
+                    ( loanPurpose_ === 'Purchase' ) &&
+                        <div className="bgFormField p-4 rounded-lg shadow-sm">
+                            <label htmlFor="purchase-price" className="block text-sm font-medium text-gray-600">Purchase Price</label>
+                            <div className="relative mt-1 flex items-center">
+                                <input
+                                    type="number"
+                                    id="purchase-price"
+                                    name="purchasePrice"
+                                    value={formData.purchasePrice}
+                                    onChange={handleChange}
+                                    step={incrementedValue}
+                                    placeholder="Enter purchase price"
+                                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                    required
+                                />
+                            </div>
+                        </div>
+                }
 
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+                {
+                    ( loanPurpose_ === 'Refinance' ) &&
+                        <div className="bgFormField p-4 rounded-lg shadow-sm">
+                            <label htmlFor="purchase-price" className="block text-sm font-medium text-gray-600">Appraised Value</label>
+                            <div className="relative mt-1 flex items-center">
+                                <input
+                                    type="number"
+                                    id="appraised-value"
+                                    name="appraisedValue"
+                                    value={formData.appraisedValue}
+                                    onChange={handleChange}
+                                    step={incrementedValue}
+                                    placeholder="Enter appraised value"
+                                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                    required
+                                />
+                            </div>
+                        </div>
+                }
+
+                <div className="bgFormField p-4 rounded-lg shadow-sm">
                     <label htmlFor="loan-term" className="block text-sm font-medium text-gray-600">Loan Term (years)</label>
-                    <input
-                        type="number"
+                    <select
                         id="loan-term"
                         name="loanTerm"
                         value={formData.loanTerm}
                         onChange={handleChange}
-                        step="0.1"
-                        placeholder="Enter loan term in years"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                        required
-                    />
+                        className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                        required>{loanTermData()?.map((item) => (<option value={item}>{item}</option>))}
+                    </select>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div className="bgFormField p-4 rounded-lg shadow-sm">
                     <label htmlFor="interest-rate" className="block text-sm font-medium text-gray-600">Interest Rate (%)</label>
-                    <input
-                        type="number"
+                    <select
                         id="interest-rate"
                         name="interestRate"
                         value={formData.interestRate}
                         onChange={handleChange}
-                        step="0.01"
-                        placeholder="Enter annual interest rate"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                        className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                         required
-                    />
+                        placeholder="Select annual interest rate">{interestRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                    </select>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div className="bgFormField p-4 rounded-lg shadow-sm">
                     <label htmlFor="property-tax" className="block text-sm font-medium text-gray-600">Property Tax (annual)</label>
-                    <input
-                        type="number"
-                        id="property-tax"
-                        name="propertyTax"
-                        value={formData.propertyTax}
-                        onChange={handleChange}
-                        step="0.01"
-                        placeholder="Enter annual property tax"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                        required
-                    />
+                    <div className="relative mt-1 flex items-center">
+                        <input
+                            type="number"
+                            id="property-tax"
+                            name="propertyTax"
+                            value={formData.propertyTax}
+                            onChange={handleChange}
+                            step={incrementedValue}
+                            placeholder="Enter annual property tax"
+                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                            required
+                        />
+                    </div>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+                <div className="bgFormField p-4 rounded-lg shadow-sm">
                     <label htmlFor="insurance" className="block text-sm font-medium text-gray-600">Insurance</label>
-                    <input
-                        type="number"
-                        id="insurance"
-                        name="insurance"
-                        value={formData.insurance}
-                        onChange={handleChange}
-                        step="0.01"
-                        placeholder="Enter insurance amount"
-                        className="mt-1 block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                        required
-                    />
+                    <div className="relative mt-1 flex items-center">
+                        <input
+                            type="number"
+                            id="insurance"
+                            name="insurance"
+                            value={formData.insurance}
+                            onChange={handleChange}
+                            step={incrementedValue}
+                            placeholder="Enter insurance amount"
+                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                            required
+                        />
+                    </div>
                 </div>
             </form>
         </div>

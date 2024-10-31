@@ -15,3 +15,73 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.bgPrimary {
+  background-color: #3D8C68;
+}
+
+.bgSecondary {
+  background-color: #00567A;
+}
+
+.bgTertiary {
+  background-color: #C0C0C0;
+}
+
+.bgFormField {
+  background-color: #00567a21;
+}
+
+.textPrimary {
+  color: #3D8C68;
+}
+
+.textSecondary {
+  color: #00567A;
+}
+
+.textTertiary {
+  color: #C0C0C0;
+}
+
+.borderPrimary {
+  border-color: #3D8C68;
+}
+
+.borderSecondary {
+  border-color: #00567A;
+}
+
+.borderTertiary {
+  border-color: #C0C0C0;
+}
+
+thead th { position: sticky; top: 0; }
+
+/* Hide arrows in Chrome, Safari, Edge, and Opera */
+/* input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+} */
+
+/* Hide arrows in Firefox */
+/* input[type="number"] {
+    -moz-appearance: textfield;
+} */
+
+/* Ensure proper padding to prevent overlap with arrows */
+/* input[type="number"] {
+  padding-right: 30px;
+}
+
+.up-arrow, .down-arrow {
+  font-size: 12px;
+  text-align: center;
+  color: gray;
+} */
+
+/* Optional hover styling */
+/* .up-arrow:hover, .down-arrow:hover {
+  color: black;
+} */

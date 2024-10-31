@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Calculate from "./calculate.js";
 import LoanPayment from "./loanPayment.js";
 import PaymentBreakdown from './paymentBreakdown.js';
@@ -20,9 +20,10 @@ function Calculator() {
     };
 
     const [results, setResults] = useState(null);
-    const [activeTab, setActiveTab] = useState('tab1');
     
-    const handleCalculation = (value) => setResults(value);
+    const handleCalculation = useCallback((value) => {
+        setResults(value);
+    }, [results]);
 
     return (
         <div className="container mx-auto px-4 py-8">

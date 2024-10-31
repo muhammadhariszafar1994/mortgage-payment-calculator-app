@@ -89,7 +89,7 @@ const DetailedExpenses = ({ formData }) => {
     return (
         <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead>
-                <tr className="bg-blue-600 text-white">
+                <tr className="bgSecondary text-white">
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Month</th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Rent</th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Renter's Insurance</th>

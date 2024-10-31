@@ -7,7 +7,7 @@ function LoanPayment({results}) {
             <div className="mt-4">
                 <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
                     <thead>
-                        <tr className="bg-blue-600 text-white">
+                        <tr className="bgSecondary text-white">
                             <th className="p-4 text-left">Description</th>
                             <th className="p-4 text-left">Amount</th>
                             <th className="p-4 text-left">% of Payment</th>

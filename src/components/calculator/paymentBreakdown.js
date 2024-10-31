@@ -11,7 +11,7 @@ function PaymentBreakdown({results}) {
             {
                 label: 'Payment Breakdown',
                 data: results?.paymentBreakdown?.data ?? [1, 1],
-                backgroundColor: ['#2563eb', '#eff6ff'],
+                backgroundColor: ['#3D8C68', '#C0C0C0'],
                 borderColor: ['#ffffff', '#ffffff'],
                 borderWidth: 5,
             },

@@ -14,7 +14,7 @@ function App() {
                 <button
                     className={`py-2 px-4 text-sm font-medium ${
                         activeTab === 'tab1'
-                            ? 'text-blue-600 border-b-2 border-blue-600'
+                            ? 'textSecondary border-b-2 borderSecondary'
                             : 'text-gray-500'
                     }`}
                     onClick={() => setActiveTab('tab1')}
@@ -24,7 +24,7 @@ function App() {
                 <button
                     className={`py-2 px-4 text-sm font-medium ${
                         activeTab === 'tab2'
-                            ? 'text-blue-600 border-b-2 border-blue-600'
+                            ? 'textSecondary border-b-2 borderSecondary'
                             : 'text-gray-500'
                     }`}
                     onClick={() => setActiveTab('tab2')}
