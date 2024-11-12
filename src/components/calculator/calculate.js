@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { loanPurpose, loanTermData, interestRateData } from "./variables/data";
+import { numberWithCommas } from "../../helper";
 
 const incrementedValue = 10000;
 
@@ -100,11 +101,11 @@ function Calculate({onCalculate}) {
             }
 
             setResults({
-                principalInterest,
-                taxesInsurance,
-                totalPayment,
-                principalInterestPercent,
-                taxesInsurancePercent,
+                principalInterest: numberWithCommas(principalInterest),
+                taxesInsurance:  numberWithCommas(taxesInsurance),
+                totalPayment: numberWithCommas(totalPayment),
+                principalInterestPercent: numberWithCommas(principalInterestPercent),
+                taxesInsurancePercent: numberWithCommas(taxesInsurancePercent),
                 paymentBreakdown: {
                     labels: ['Principal & Interest', 'Taxes & Insurance'],
                     data: [principalInterestPercent, taxesInsurancePercent]
