@@ -1,12 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import Calculate from "./calculate.js";
 import FinancialInformationDetail from './financialInformationDetail.js';
+import SummaryResults from './summaryResults.js';
 
 function RentVsBuy() {
     const [results, setResults] = useState(null);
+    const [summaryResults, setSummaryResults] = useState(null);
+
     const handleCalculation = useCallback((value) => {
-        console.log('value', value)
-        setResults(value);
+        console.log('value', value);
+
+        setResults(value?.calculateMonthlyValues);
+        setSummaryResults(value?.summaryResultsValues);
     }, []);
 
     return (
@@ -17,6 +22,10 @@ function RentVsBuy() {
                 </div>
                 <div className="col-span-2">
                     {/* <FinancialInformationDetail results={results} /> */}
+
+                    {/* <div className="mb-4">
+                        <SummaryResults results={results}/>
+                    </div> */}
                     <div className="container mx-auto">
                         {
                             results?.length > 0 ? (

@@ -85,14 +85,15 @@ function Calculate({onCalculate}) {
 
                 monthlyAmortizationSchedule.push({
                     month: !isNaN(month) && month,
-                    beginningBalance: !isNaN(beginningBalance) && beginningBalance.toFixed(2),
-                    interestPayment: !isNaN(interestPayment) && interestPayment.toFixed(2),
-                    principalPayment: !isNaN(principalPayment) && principalPayment.toFixed(2),
-                    totalPayment: !isNaN(monthlyPayment + monthlyPropertyTax + monthlyInsurance) && (monthlyPayment + monthlyPropertyTax + monthlyInsurance).toFixed(2),
-                    impounds: !isNaN(monthlyPropertyTax + monthlyInsurance) && (monthlyPropertyTax + monthlyInsurance).toFixed(2),
-                    endingBalance: !isNaN(endingBalance) && endingBalance.toFixed(2),
-                    cumulativeInterest: !isNaN(cumulativeInterest) && cumulativeInterest.toFixed(2),
-                    cumulativePrincipal: !isNaN(cumulativePrincipal) && cumulativePrincipal.toFixed(2)
+                    beginningBalance: !isNaN(beginningBalance) && numberWithCommas(beginningBalance.toFixed(2)),
+                    interestPayment: !isNaN(interestPayment) && numberWithCommas(interestPayment.toFixed(2)),
+                    principalPayment: !isNaN(principalPayment) && numberWithCommas(principalPayment.toFixed(2)),
+                    pAndiPayment: (!isNaN(interestPayment) && !isNaN(principalPayment)) && numberWithCommas((parseFloat(interestPayment) + parseFloat(principalPayment)).toFixed(2)),
+                    impounds: !isNaN(monthlyPropertyTax + monthlyInsurance) && numberWithCommas((monthlyPropertyTax + monthlyInsurance).toFixed(2)),
+                    totalPayment: !isNaN(monthlyPayment + monthlyPropertyTax + monthlyInsurance) && numberWithCommas((monthlyPayment + monthlyPropertyTax + monthlyInsurance).toFixed(2)),
+                    endingBalance: !isNaN(endingBalance) && numberWithCommas(endingBalance.toFixed(2)),
+                    cumulativeInterest: !isNaN(cumulativeInterest) && numberWithCommas(cumulativeInterest.toFixed(2)),
+                    cumulativePrincipal: !isNaN(cumulativePrincipal) && numberWithCommas(cumulativePrincipal.toFixed(2))
                 });
 
                 beginningBalance = endingBalance;

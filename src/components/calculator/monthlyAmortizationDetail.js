@@ -29,7 +29,7 @@ function MonthlyAmortizationDetail({results}) {
                                         <td className="p-4 text-gray-800">{item.beginningBalance}</td>
                                         <td className="p-4 text-gray-800">{item.interestPayment}</td>
                                         <td className="p-4 text-gray-800">{item.principalPayment}</td>
-                                        <td className="p-4 text-gray-800">{(parseFloat(item.interestPayment) + parseFloat(item.principalPayment)).toFixed(2)}</td>
+                                        <td className="p-4 text-gray-800">{item.pAndiPayment}</td>
                                         <td className="p-4 text-gray-800">{item.impounds}</td>
                                         <td className="p-4 text-gray-800">{item.totalPayment}</td>
                                         <td className="p-4 text-gray-800">{item.endingBalance}</td>

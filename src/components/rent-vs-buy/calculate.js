@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { 
+    rentIncreaseAndDecrease, 
+    loanTermData, 
+    interestRateData, 
+    discountPointsData, 
+    homeAppreciationAndDepreciationData,
+    expectedYearsInHome,
+    homeSellingCostsData,
+    taxRateData,
+    savingsRateData
+} from "./variables/data";
 import { numberWithCommas } from "../../helper";
 
 const incrementedValue = 10000;
 
 function Calculate({onCalculate}) {
-
     // const [formData, setFormData] = useState({
     //     rent: 700,
     //     insurance: 15,
@@ -197,11 +207,12 @@ function Calculate({onCalculate}) {
             });
 
             presentValue = endingPrincipal;
-
-            console.log('endingPrincipal')
         }
         
-        return results;
+        return {
+            calculateMonthlyValues: results,
+            summaryResultsValues: ''
+        };
     };
 
     const handleChange = (e) => {
@@ -255,9 +266,21 @@ function Calculate({onCalculate}) {
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
-                                    <label htmlFor="rentIncrease" className="block text-sm font-medium text-gray-600">Rent % Increase/(Decrease) (annual)</label>
+                                    <label htmlFor="rentIncrease" className="block text-sm font-medium text-gray-600">
+                                        Rent % Increase/(Decrease) (annual)
+                                    </label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="rentIncrease"
+                                            name="rentIncrease"
+                                            value={formData.rentIncrease}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required
+                                        >
+                                            {rentIncreaseAndDecrease()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        {/* <input
                                             type="number"
                                             id="rentIncrease"
                                             name="rentIncrease"
@@ -267,7 +290,7 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter annual rent increase"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                             </div>
@@ -365,9 +388,17 @@ function Calculate({onCalculate}) {
                         <h3 className="text-lg font-semibold text-gray-600 mb-4">Loan Info</h3>
                             <div className="space-y-4">
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
-                                    <label htmlFor="term" className="block text-sm font-medium text-gray-600">Term (years)</label>
+                                    <label htmlFor="term" className="block text-sm font-medium text-gray-600">Loan Term (years)</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="term"
+                                            name="term"
+                                            value={formData.term}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{loanTermData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        {/* <input
                                             type="number"
                                             id="term"
                                             name="term"
@@ -377,13 +408,21 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter loan term in years"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="interestRate" className="block text-sm font-medium text-gray-600">Interest Rate (%)</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="interestRate"
+                                            name="interestRate"
+                                            value={formData.interestRate}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{interestRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        {/* <input
                                             type="number"
                                             id="interestRate"
                                             name="interestRate"
@@ -393,7 +432,7 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter annual interest rate"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
@@ -415,7 +454,15 @@ function Calculate({onCalculate}) {
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="discountPoints" className="block text-sm font-medium text-gray-600">Discount Points</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="discountPoints"
+                                            name="discountPoints"
+                                            value={formData.discountPoints}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{discountPointsData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        {/* <input
                                             type="text"
                                             id="discountPoints"
                                             name="discountPoints"
@@ -425,7 +472,7 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter discount points"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
@@ -454,7 +501,15 @@ function Calculate({onCalculate}) {
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="appreciationRate" className="block text-sm font-medium text-gray-600">Home Appreciation/Depreciation Rate (annual)</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="appreciationRate"
+                                            name="appreciationRate"
+                                            value={formData.appreciationRate}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{homeAppreciationAndDepreciationData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        {/* <input
                                             type="number"
                                             id="appreciationRate"
                                             name="appreciationRate"
@@ -464,13 +519,22 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter appreciation/depreciation rate"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="yearsInHome" className="block text-sm font-medium text-gray-600">Expected Years in Home</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="yearsInHome"
+                                            name="yearsInHome"
+                                            value={formData.yearsInHome}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{expectedYearsInHome()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        
+                                        {/* <input
                                             type="number"
                                             id="yearsInHome"
                                             name="yearsInHome"
@@ -480,13 +544,22 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter expected years in home"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="homeSellingCosts" className="block text-sm font-medium text-gray-600">Home Selling Costs (% of Selling Price)</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="homeSellingCosts"
+                                            name="homeSellingCosts"
+                                            value={formData.homeSellingCosts}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{homeSellingCostsData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+                                        
+                                        {/* <input
                                             type="number"
                                             id="homeSellingCosts"
                                             name="homeSellingCosts"
@@ -496,12 +569,21 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter home selling costs percentage"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="taxRate" className="block text-sm font-medium text-gray-600">Tax Rate (Federal + State)</label>
                                     <div className="relative mt-1 flex items-center">
+                                        {/* <select
+                                            id="taxRate"
+                                            name="taxRate"
+                                            value={formData.taxRate}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{taxRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select> */}
+
                                         <input
                                             type="text"
                                             id="taxRate"
@@ -512,13 +594,28 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter tax rate"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
+                                            list="taxRateOptions"
                                         />
+                                        <datalist id="taxRateOptions">
+                                            {taxRateData()?.map((rate, index) => (
+                                                <option key={index} value={rate} />
+                                            ))}
+                                        </datalist>
                                     </div>
                                 </div>
                                 <div className="bgFormField p-4 rounded-lg shadow-sm">
                                     <label htmlFor="savingsRate" className="block text-sm font-medium text-gray-600">Savings Rate on Excess Funds</label>
                                     <div className="relative mt-1 flex items-center">
-                                        <input
+                                        <select
+                                            id="savingsRate"
+                                            name="savingsRate"
+                                            value={formData.savingsRate}
+                                            onChange={handleChange}
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required>{savingsRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                                        </select>
+
+                                        {/* <input
                                             type="text"
                                             id="savingsRate"
                                             name="savingsRate"
@@ -528,7 +625,7 @@ function Calculate({onCalculate}) {
                                             placeholder="Enter savings rate"
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                             </div>
