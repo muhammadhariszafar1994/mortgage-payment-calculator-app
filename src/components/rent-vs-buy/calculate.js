@@ -156,12 +156,6 @@ function Calculate({onCalculate}) {
         const totalRentExpenseArray = [];
         const totalHousingExpenseArray = [];
 
-        let summaryResultsValues = {
-            costOfRenting: 0,
-            costOfBuying: 0,
-            savingsByPurchasingOrRenting: 0
-        };
-
         const months = parseFloat(_yearsInHome) * 12;
 
         for (let month = 1; month <= months; month++) {
@@ -193,7 +187,7 @@ function Calculate({onCalculate}) {
 
             /*** Actual ***/
             // const totalRentExpense = Math.round(parseFloat(rent) + parseFloat(insurance) + interestOnDownPaymentSavings);
-            const totalRentExpense = Math.round(parseFloat(adjustedRent) + parseFloat(_insurance) + interestOnDownPaymentSavings);
+            const totalRentExpense = parseFloat(adjustedRent) + parseFloat(_insurance) + interestOnDownPaymentSavings;
             
             const impounds = (_propertyTax / 12 + _insuranceAnnual / 12);
 
@@ -251,13 +245,17 @@ function Calculate({onCalculate}) {
 
         const costOfRenting = totalRentExpenseArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         const costOfBuying = totalHousingExpenseArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        let savingsByPurchasingOrRenting = 0;
+
+        if(costOfRenting < costOfBuying) savingsByPurchasingOrRenting = numberWithCommas(parseFloat((costOfBuying - costOfRenting)).toFixed(0));
+        else if(costOfRenting > costOfBuying) savingsByPurchasingOrRenting = numberWithCommas(parseFloat((costOfRenting - costOfBuying)).toFixed(0));
         
         return {
             calculateMonthlyValues: results,
             summaryResultsValues: {
                 costOfRenting: numberWithCommas(parseFloat(costOfRenting).toFixed(0)),
                 costOfBuying: numberWithCommas(parseFloat(costOfBuying).toFixed(0)),
-                savingsByPurchasingOrRenting: numberWithCommas(parseFloat((costOfRenting - costOfBuying)).toFixed(0))
+                savingsByPurchasingOrRenting: savingsByPurchasingOrRenting
             }
         };
     };
@@ -333,7 +331,7 @@ function Calculate({onCalculate}) {
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
                                         >
-                                            {rentIncreaseAndDecrease()?.map((item) => (<option value={item}>{item}</option>))}
+                                            {rentIncreaseAndDecrease()?.map((item) => (<option value={item}>{item}%</option>))}
                                         </select>
                                         {/* <input
                                             // type="number"
@@ -482,7 +480,7 @@ function Calculate({onCalculate}) {
                                             value={formData.interestRate}
                                             onChange={handleChange}
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                                            required>{interestRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                                            required>{interestRateData()?.map((item) => (<option value={item}>{item}%</option>))}
                                         </select>
                                         {/* <input
                                             // type="number"
@@ -524,7 +522,7 @@ function Calculate({onCalculate}) {
                                             value={formData.discountPoints}
                                             onChange={handleChange}
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                                            required>{discountPointsData()?.map((item) => (<option value={item}>{item}</option>))}
+                                            required>{discountPointsData()?.map((item) => (<option value={item}>{item}%</option>))}
                                         </select>
                                         {/* <input
                                             type="text"
@@ -572,7 +570,7 @@ function Calculate({onCalculate}) {
                                             value={formData.appreciationRate}
                                             onChange={handleChange}
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                                            required>{homeAppreciationAndDepreciationData()?.map((item) => (<option value={item}>{item}</option>))}
+                                            required>{homeAppreciationAndDepreciationData()?.map((item) => (<option value={item}>{item}%</option>))}
                                         </select>
                                         {/* <input
                                             // type="number"
@@ -623,7 +621,7 @@ function Calculate({onCalculate}) {
                                             value={formData.homeSellingCosts}
                                             onChange={handleChange}
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                                            required>{homeSellingCostsData()?.map((item) => (<option value={item}>{item}</option>))}
+                                            required>{homeSellingCostsData()?.map((item) => (<option value={item}>{item}%</option>))}
                                         </select>
                                         
                                         {/* <input
@@ -680,7 +678,7 @@ function Calculate({onCalculate}) {
                                             value={formData.savingsRate}
                                             onChange={handleChange}
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
-                                            required>{savingsRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                                            required>{savingsRateData()?.map((item) => (<option value={item}>{item}%</option>))}
                                         </select>
 
                                         {/* <input

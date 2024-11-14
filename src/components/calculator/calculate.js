@@ -233,7 +233,7 @@ function Calculate({onCalculate}) {
                         onChange={handleChange}
                         className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                         required
-                        placeholder="Select annual interest rate">{interestRateData()?.map((item) => (<option value={item}>{item}</option>))}
+                        placeholder="Select annual interest rate">{interestRateData()?.map((item) => (<option value={item}>{item}%</option>))}
                     </select>
                 </div>
 
