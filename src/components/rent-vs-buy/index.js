@@ -8,8 +8,6 @@ function RentVsBuy() {
     const [summaryResults, setSummaryResults] = useState(null);
 
     const handleCalculation = useCallback((value) => {
-        console.log('value', value);
-
         setResults(value?.calculateMonthlyValues);
         setSummaryResults(value?.summaryResultsValues);
     }, []);
@@ -23,9 +21,10 @@ function RentVsBuy() {
                 <div className="col-span-2">
                     {/* <FinancialInformationDetail results={results} /> */}
 
-                    {/* <div className="mb-4">
-                        <SummaryResults results={results}/>
-                    </div> */}
+                    <div className="mb-4">
+                        <SummaryResults summaryResults={summaryResults}/>
+                    </div>
+
                     <div className="container mx-auto">
                         {
                             results?.length > 0 ? (
@@ -87,8 +86,10 @@ function RentVsBuy() {
                                     </div>
                                 </>
                             ) 
-                            : 
-                            <><h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">No Detail Found!</h1></>
+                                    : 
+                                <>
+                                    <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">No Detail Found!</h1>
+                                </>
                         }
                     </div>
                 </div>

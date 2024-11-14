@@ -10,7 +10,10 @@ import {
     taxRateData,
     savingsRateData
 } from "./variables/data";
-import { numberWithCommas } from "../../helper";
+import { 
+    numberWithCommas, 
+    removeCommas 
+} from "../../helper";
 
 const incrementedValue = 10000;
 
@@ -109,18 +112,36 @@ function Calculate({onCalculate}) {
         } = formData;
 
         let presentValue = 0;
+
+        const _rent = removeCommas(rent);
+        const _insurance = removeCommas(insurance);
+        const _purchasePrice = removeCommas(purchasePrice);
+        const _downPayment = removeCommas(downPayment);
+        const _propertyTax = removeCommas(propertyTax);
+        const _insuranceAnnual = removeCommas(insuranceAnnual);
+        const _maintenance = removeCommas(maintenance);
+        const _term = removeCommas(term);
+        const _interestRate = removeCommas(interestRate);
+        const _originationCharge = removeCommas(originationCharge);
+        const _discountPoints = removeCommas(discountPoints);
+        const _appreciationRate = removeCommas(appreciationRate);
+        const _yearsInHome = removeCommas(yearsInHome);
+        const _homeSellingCosts = removeCommas(homeSellingCosts);
+        const _taxRate = removeCommas(taxRate);
+        const _savingsRate = removeCommas(savingsRate);
+        const _rentIncrease = removeCommas(rentIncrease);
         
-        const monthlyInterestRate = (parseFloat(interestRate) / 100) / 12;
+        const monthlyInterestRate = (parseFloat(_interestRate) / 100) / 12;
 
         /*** Actual ***/
         // const numberOfPayments = parseFloat(term) * 12; 
-        const numberOfPayments = parseFloat(term) * 30;
+        const numberOfPayments = parseFloat(_term) * 30;
         
         /*** Actual ***/
         // const loanAmount = parseFloat(purchasePrice) - parseFloat(downPayment);
-        const loanAmount = (parseFloat(purchasePrice) - parseFloat(downPayment)) 
-                   * (1 + parseFloat(discountPoints) / 100) 
-                   + parseFloat(originationCharge);
+        const loanAmount = (parseFloat(_purchasePrice) - parseFloat(_downPayment)) 
+                   * (1 + parseFloat(_discountPoints) / 100) 
+                   + parseFloat(_originationCharge);
         
         /*** Actual ***/
         // const discountPointsValue = parseFloat(discountPoints) / 100;
@@ -131,22 +152,31 @@ function Calculate({onCalculate}) {
         const monthlyPayment = PMT(monthlyInterestRate, numberOfPayments, loanAmount);
         
         let results = [];
+        
+        const totalRentExpenseArray = [];
+        const totalHousingExpenseArray = [];
 
-        const months = parseFloat(yearsInHome) * 12;
+        let summaryResultsValues = {
+            costOfRenting: 0,
+            costOfBuying: 0,
+            savingsByPurchasingOrRenting: 0
+        };
+
+        const months = parseFloat(_yearsInHome) * 12;
 
         for (let month = 1; month <= months; month++) {
             
             if (month === 1) {
                 // Calculate the initial principal for the first month
-                presentValue = (parseFloat(purchasePrice) - parseFloat(downPayment)) 
-                                    * (1 + parseFloat(discountPoints) / 100) 
-                                    + parseFloat(originationCharge);
+                presentValue = (parseFloat(_purchasePrice) - parseFloat(_downPayment)) 
+                                    * (1 + parseFloat(_discountPoints) / 100) 
+                                    + parseFloat(_originationCharge);
             } else {
                 // For subsequent months, use the previous month's ending principal
                 presentValue = results[month - 2]?.endingPrincipal; // Assuming results array stores previous calculations
             }
 
-            const adjustedRent = calculateAdjustedRent(rent, rentIncrease, month)
+            const adjustedRent = calculateAdjustedRent(_rent, _rentIncrease, month)
             const interestPayment = Math.round(presentValue * monthlyInterestRate);
             
             const principalPayment = monthlyPayment - interestPayment;
@@ -156,31 +186,41 @@ function Calculate({onCalculate}) {
                 sumOfPrevInterestOnDownPaymentSavings += (results[_month-1] && !isNaN(results[_month-1]?.interestOnDownPaymentSavings)) ? parseFloat(results[_month-1]?.interestOnDownPaymentSavings) : 0;
             }
             
-            let interestOnDownPaymentSavings = (-downPayment * Math.pow(1 + (savingsRate / 100) / 12, month));
-            interestOnDownPaymentSavings = interestOnDownPaymentSavings + parseFloat(downPayment) - sumOfPrevInterestOnDownPaymentSavings
+            let interestOnDownPaymentSavings = (-_downPayment * Math.pow(1 + (_savingsRate / 100) / 12, month));
+            interestOnDownPaymentSavings = interestOnDownPaymentSavings + parseFloat(_downPayment) - sumOfPrevInterestOnDownPaymentSavings
             
-            const interestOnSavingsPostTax = Math.round(interestOnDownPaymentSavings * (1 - taxRate / 100));
+            const interestOnSavingsPostTax = Math.round(interestOnDownPaymentSavings * (1 - _taxRate / 100));
 
             /*** Actual ***/
             // const totalRentExpense = Math.round(parseFloat(rent) + parseFloat(insurance) + interestOnDownPaymentSavings);
-            const totalRentExpense = Math.round(parseFloat(adjustedRent) + parseFloat(insurance) + interestOnDownPaymentSavings);
+            const totalRentExpense = Math.round(parseFloat(adjustedRent) + parseFloat(_insurance) + interestOnDownPaymentSavings);
             
-            const impounds = (propertyTax / 12 + insuranceAnnual / 12);
+            const impounds = (_propertyTax / 12 + _insuranceAnnual / 12);
 
             const totalPayment = monthlyPayment + impounds;
             // const totalPayment = 869 + impounds;
 
             const endingPrincipal = presentValue - principalPayment;
-            const homeValue = parseFloat(purchasePrice) * Math.pow(1 + ((appreciationRate / 100) / 12), month);
+            const homeValue = parseFloat(_purchasePrice) * Math.pow(1 + ((_appreciationRate / 100) / 12), month);
             const homeEquity = homeValue - endingPrincipal;
 
             /*** Actual ***/
             // const sellingCosts = (month === (yearsInHome * 12)) ? homeValue * (homeSellingCosts / 100) : 0;
-            const sellingCosts = calculateSellingCosts(month, yearsInHome, homeValue, homeSellingCosts);
+            const sellingCosts = calculateSellingCosts(month, _yearsInHome, homeValue, _homeSellingCosts);
             
-            const netGainBeforeTaxes =  (sellingCosts > 0) ? ((parseFloat(purchasePrice) + sellingCosts) - homeValue) : 0;
-            const netGainAfterTaxes =  (sellingCosts > 0) ? (netGainBeforeTaxes * (1 - taxRate / 100)) : 0;
-            const totalHousingExpense = totalPayment + (maintenance/12);
+            const netGainBeforeTaxes =  (sellingCosts > 0) ? ((parseFloat(_purchasePrice) + sellingCosts) - homeValue) : 0;
+            const netGainAfterTaxes =  (sellingCosts > 0) ? (netGainBeforeTaxes * (1 - _taxRate / 100)) : 0;
+            let totalHousingExpense = 0; 
+
+            const totalMonths = yearsInHome * 12;
+
+            // array of total rent expense
+            totalRentExpenseArray.push(totalRentExpense);
+            if (month === totalMonths) {
+                totalHousingExpense = totalPayment + (maintenance/12) + netGainAfterTaxes;
+            } else totalHousingExpense = totalPayment + (_maintenance/12);
+            
+            totalHousingExpenseArray.push(totalHousingExpense);
 
             results.push({
                 month,
@@ -208,17 +248,30 @@ function Calculate({onCalculate}) {
 
             presentValue = endingPrincipal;
         }
+
+        const costOfRenting = totalRentExpenseArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const costOfBuying = totalHousingExpenseArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         
         return {
             calculateMonthlyValues: results,
-            summaryResultsValues: ''
+            summaryResultsValues: {
+                costOfRenting: numberWithCommas(parseFloat(costOfRenting).toFixed(0)),
+                costOfBuying: numberWithCommas(parseFloat(costOfBuying).toFixed(0)),
+                savingsByPurchasingOrRenting: numberWithCommas(parseFloat((costOfRenting - costOfBuying)).toFixed(0))
+            }
         };
     };
 
     const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData({ ...formData, [id]: value });
+        const { name, value } = e.target;
+        const formattedValue = numberWithCommas(value);
+        setFormData({
+            ...formData,
+            // [name]: value
+            [name]: formattedValue
+        });
     };
+
 
     useEffect(() => {
         onCalculate(calculateMonthlyValues());
@@ -237,7 +290,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="rent" className="block text-sm font-medium text-gray-600">Rent (monthly)</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="rent"
                                             name="rent"
                                             value={formData.rent}
@@ -253,7 +307,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="insurance" className="block text-sm font-medium text-gray-600">Renter's Insurance (monthly)</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="insurance"
                                             name="insurance"
                                             value={formData.insurance}
@@ -281,7 +336,8 @@ function Calculate({onCalculate}) {
                                             {rentIncreaseAndDecrease()?.map((item) => (<option value={item}>{item}</option>))}
                                         </select>
                                         {/* <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="rentIncrease"
                                             name="rentIncrease"
                                             value={formData.rentIncrease}
@@ -304,7 +360,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="purchasePrice" className="block text-sm font-medium text-gray-600">Purchase Price</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="purchasePrice"
                                             name="purchasePrice"
                                             value={formData.purchasePrice}
@@ -320,7 +377,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="downPayment" className="block text-sm font-medium text-gray-600">Down Payment</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="downPayment"
                                             name="downPayment"
                                             value={formData.downPayment}
@@ -336,7 +394,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="propertyTax" className="block text-sm font-medium text-gray-600">Property Tax (annual)</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="propertyTax"
                                             name="propertyTax"
                                             value={formData.propertyTax}
@@ -352,7 +411,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="insuranceAnnual" className="block text-sm font-medium text-gray-600">Homeowner's Insurance (annual)</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="insuranceAnnual"
                                             name="insuranceAnnual"
                                             value={formData.insuranceAnnual}
@@ -368,7 +428,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="maintenance" className="block text-sm font-medium text-gray-600">Maintenance (annual)</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="maintenance"
                                             name="maintenance"
                                             value={formData.maintenance}
@@ -399,7 +460,8 @@ function Calculate({onCalculate}) {
                                             required>{loanTermData()?.map((item) => (<option value={item}>{item}</option>))}
                                         </select>
                                         {/* <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="term"
                                             name="term"
                                             value={formData.term}
@@ -423,7 +485,8 @@ function Calculate({onCalculate}) {
                                             required>{interestRateData()?.map((item) => (<option value={item}>{item}</option>))}
                                         </select>
                                         {/* <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="interestRate"
                                             name="interestRate"
                                             value={formData.interestRate}
@@ -439,7 +502,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="originationCharge" className="block text-sm font-medium text-gray-600">Origination Charge</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="originationCharge"
                                             name="originationCharge"
                                             value={formData.originationCharge}
@@ -479,7 +543,8 @@ function Calculate({onCalculate}) {
                                     <label htmlFor="otherServices" className="block text-sm font-medium text-gray-600">Other Settlement Services</label>
                                     <div className="relative mt-1 flex items-center">
                                         <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="otherServices"
                                             name="otherServices"
                                             value={formData.otherServices}
@@ -510,7 +575,8 @@ function Calculate({onCalculate}) {
                                             required>{homeAppreciationAndDepreciationData()?.map((item) => (<option value={item}>{item}</option>))}
                                         </select>
                                         {/* <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="appreciationRate"
                                             name="appreciationRate"
                                             value={formData.appreciationRate}
@@ -535,7 +601,8 @@ function Calculate({onCalculate}) {
                                         </select>
                                         
                                         {/* <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="yearsInHome"
                                             name="yearsInHome"
                                             value={formData.yearsInHome}
@@ -560,7 +627,8 @@ function Calculate({onCalculate}) {
                                         </select>
                                         
                                         {/* <input
-                                            type="number"
+                                            // type="number"
+                                            type="text"
                                             id="homeSellingCosts"
                                             name="homeSellingCosts"
                                             value={formData.homeSellingCosts}

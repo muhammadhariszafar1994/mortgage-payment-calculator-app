@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { loanPurpose, loanTermData, interestRateData } from "./variables/data";
-import { numberWithCommas } from "../../helper";
+import { numberWithCommas, removeCommas } from "../../helper";
 
 const incrementedValue = 10000;
 
@@ -30,9 +30,11 @@ function Calculate({onCalculate}) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        const formattedValue = numberWithCommas(value);
         setFormData({
             ...formData,
-            [name]: value
+            // [name]: value
+            [name]: formattedValue
         });
     };
 
@@ -49,12 +51,13 @@ function Calculate({onCalculate}) {
             insurance
         } = formData;
 
-        const loan = parseFloat(loanAmount);
-        const term = parseFloat(loanTerm);
-        const rate = parseFloat(interestRate) / 100 / 12;
+
+        const loan = parseFloat(removeCommas(loanAmount));
+        const term = parseFloat(removeCommas(loanTerm));
+        const rate = parseFloat(removeCommas(interestRate)) / 100 / 12;
         const months = term * 12;
-        const annualPropertyTax = parseFloat(propertyTax);
-        const annualInsurance = parseFloat(insurance);
+        const annualPropertyTax = parseFloat(removeCommas(propertyTax));
+        const annualInsurance = parseFloat(removeCommas(insurance));
 
         if (loan && term && interestRate) {
             const monthlyPayment = (
@@ -139,7 +142,8 @@ function Calculate({onCalculate}) {
                     </label>
                     <div className="relative mt-1 flex items-center">
                         <input
-                            type="number"
+                            // type="number"
+                            type="text"
                             id="loan-amount"
                             name="loanAmount"
                             value={formData.loanAmount}
@@ -172,7 +176,8 @@ function Calculate({onCalculate}) {
                             <label htmlFor="purchase-price" className="block text-sm font-medium text-gray-600">Purchase Price</label>
                             <div className="relative mt-1 flex items-center">
                                 <input
-                                    type="number"
+                                    // type="number"
+                                    type="text"
                                     id="purchase-price"
                                     name="purchasePrice"
                                     value={formData.purchasePrice}
@@ -192,7 +197,8 @@ function Calculate({onCalculate}) {
                             <label htmlFor="purchase-price" className="block text-sm font-medium text-gray-600">Appraised Value</label>
                             <div className="relative mt-1 flex items-center">
                                 <input
-                                    type="number"
+                                    // type="number"
+                                    type="text"
                                     id="appraised-value"
                                     name="appraisedValue"
                                     value={formData.appraisedValue}
@@ -235,7 +241,8 @@ function Calculate({onCalculate}) {
                     <label htmlFor="property-tax" className="block text-sm font-medium text-gray-600">Property Tax (annual)</label>
                     <div className="relative mt-1 flex items-center">
                         <input
-                            type="number"
+                            // type="number"
+                            type="text"
                             id="property-tax"
                             name="propertyTax"
                             value={formData.propertyTax}
@@ -252,7 +259,8 @@ function Calculate({onCalculate}) {
                     <label htmlFor="insurance" className="block text-sm font-medium text-gray-600">Insurance</label>
                     <div className="relative mt-1 flex items-center">
                         <input
-                            type="number"
+                            // type="number"
+                            type="text"
                             id="insurance"
                             name="insurance"
                             value={formData.insurance}
