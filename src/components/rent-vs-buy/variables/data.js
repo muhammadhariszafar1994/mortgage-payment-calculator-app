@@ -1,7 +1,7 @@
 const rentIncreaseAndDecrease = () => {
     const data = [];
     
-    for (let i = -10; i <= 10; i++) data.push(String(parseFloat(i).toFixed(3)));
+    for (let i = -10; i <= 10; i++) data.push(String(parseFloat(i).toFixed(0)));
     return data;
 }
 

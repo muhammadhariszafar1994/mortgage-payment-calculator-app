@@ -134,8 +134,8 @@ function Calculate({onCalculate}) {
         const monthlyInterestRate = (parseFloat(_interestRate) / 100) / 12;
 
         /*** Actual ***/
-        // const numberOfPayments = parseFloat(term) * 12; 
-        const numberOfPayments = parseFloat(_term) * 30;
+        const numberOfPayments = parseFloat(_term) * 12; 
+        // const numberOfPayments = parseFloat(_term) * 30;
         
         /*** Actual ***/
         // const loanAmount = parseFloat(purchasePrice) - parseFloat(downPayment);
