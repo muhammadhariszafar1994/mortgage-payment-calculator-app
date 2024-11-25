@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './App.css';
 import Calculator from './components/calculator';
 import RentVsBuy from './components/rent-vs-buy';
+import HomeAffordabilityModel from './components/home-affordability-model';
 
 function App() {
   const [activeTab, setActiveTab] = useState('tab1');
@@ -31,11 +32,22 @@ function App() {
                 >
                     Rent vs. Buy
                 </button>
+                <button
+                    className={`py-2 px-4 text-sm font-medium ${
+                        activeTab === 'tab3'
+                            ? 'textSecondary border-b-2 borderSecondary'
+                            : 'text-gray-500'
+                    }`}
+                    onClick={() => setActiveTab('tab3')}
+                >
+                    Home Affordability Model
+                </button>
             </div>
         </div>
         <div className="mt-4">
             {activeTab === 'tab1' && <Calculator />}
             {activeTab === 'tab2' && <RentVsBuy />}
+            {activeTab === 'tab3' && <HomeAffordabilityModel />}
         </div>
     </div>
     

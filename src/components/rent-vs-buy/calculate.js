@@ -21,22 +21,23 @@ function Calculate({onCalculate}) {
     // const [formData, setFormData] = useState({
     //     rent: 700,
     //     insurance: 15,
+    //     rentIncrease: 1,
     //     purchasePrice: 250000,
     //     downPayment: 50000,
     //     propertyTax: 3250,
     //     insuranceAnnual: 1000,
     //     maintenance: 700,
     //     term: 30,
-    //     interestRate: 5.00,
+    //     interestRate: '5.000',
     //     originationCharge: 1500,
-    //     discountPoints: 1.00,
+    //     discountPoints: '1.000',
     //     otherServices: 1000,
-    //     appreciationRate: 5.00,
-    //     yearsInHome: 7,
-    //     homeSellingCosts: 5.00,
+    //     appreciationRate: '5.00',
+    //     yearsInHome: 30,
+    //     homeSellingCosts: '5.00',
     //     taxRate: 33.80,
-    //     savingsRate: 1.00,
-    //     rentIncrease: 1
+    //     savingsRate: '1.00',
+        
     // });
 
     const [formData, setFormData] = useState({
