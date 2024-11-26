@@ -21,7 +21,7 @@ function Calculate({onCalculate}) {
     // const [formData, setFormData] = useState({
     //     rent: 700,
     //     insurance: 15,
-    //     rentIncrease: 1,
+    //     rentIncrease: 5,
     //     purchasePrice: 250000,
     //     downPayment: 50000,
     //     propertyTax: 3250,
@@ -37,12 +37,13 @@ function Calculate({onCalculate}) {
     //     homeSellingCosts: '5.00',
     //     taxRate: 33.80,
     //     savingsRate: '1.00',
-        
+    //     homeDeductionAtSale: 500000
     // });
 
     const [formData, setFormData] = useState({
         rent: 0,
         insurance: 0,
+        rentIncrease: 0,
         purchasePrice: 0,
         downPayment: 0,
         propertyTax: 0,
@@ -58,7 +59,7 @@ function Calculate({onCalculate}) {
         homeSellingCosts: 0,
         taxRate: 0,
         savingsRate: 0,
-        rentIncrease: 0
+        homeDeductionAtSale: 0
     });
 
     const PMT = (monthlyInterestRate, numberOfPayments, loanAmount) => {
@@ -109,7 +110,8 @@ function Calculate({onCalculate}) {
             homeSellingCosts,
             taxRate,
             savingsRate,
-            rentIncrease
+            rentIncrease,
+            homeDeductionAtSale
         } = formData;
 
         let presentValue = 0;
@@ -131,6 +133,7 @@ function Calculate({onCalculate}) {
         const _taxRate = removeCommas(taxRate);
         const _savingsRate = removeCommas(savingsRate);
         const _rentIncrease = removeCommas(rentIncrease);
+        const _homeDeductionAtSale = removeCommas(homeDeductionAtSale);
         
         const monthlyInterestRate = (parseFloat(_interestRate) / 100) / 12;
 
@@ -156,6 +159,7 @@ function Calculate({onCalculate}) {
         
         const totalRentExpenseArray = [];
         const totalHousingExpenseArray = [];
+        const netBenefitArray = [];
 
         const months = parseFloat(_yearsInHome) * 12;
 
@@ -164,15 +168,20 @@ function Calculate({onCalculate}) {
             if (month === 1) {
                 // Calculate the initial principal for the first month
                 presentValue = (parseFloat(_purchasePrice) - parseFloat(_downPayment)) 
-                                    * (1 + parseFloat(_discountPoints) / 100) 
-                                    + parseFloat(_originationCharge);
+                                * (1 + (parseFloat(_discountPoints) / 100)) 
+                                + parseFloat(_originationCharge);
+
+                console.log('Month 1 Beginning principal', presentValue)
+                console.log('')
+                console.log('')
             } else {
                 // For subsequent months, use the previous month's ending principal
-                presentValue = results[month - 2]?.endingPrincipal; // Assuming results array stores previous calculations
+                presentValue = parseFloat(results[month - 2]?.endingPrincipal); // Assuming results array stores previous calculations
             }
 
+
             const adjustedRent = calculateAdjustedRent(_rent, _rentIncrease, month)
-            const interestPayment = Math.round(presentValue * monthlyInterestRate);
+            const interestPayment = presentValue * monthlyInterestRate;
             
             const principalPayment = monthlyPayment - interestPayment;
             
@@ -189,13 +198,23 @@ function Calculate({onCalculate}) {
             /*** Actual ***/
             // const totalRentExpense = Math.round(parseFloat(rent) + parseFloat(insurance) + interestOnDownPaymentSavings);
             const totalRentExpense = parseFloat(adjustedRent) + parseFloat(_insurance) + interestOnDownPaymentSavings;
+            console.log('totalRentExpense', totalRentExpense);
             
             const impounds = (_propertyTax / 12 + _insuranceAnnual / 12);
 
             const totalPayment = monthlyPayment + impounds;
             // const totalPayment = 869 + impounds;
 
-            const endingPrincipal = presentValue - principalPayment;
+            const endingPrincipal = parseFloat(presentValue).toFixed(2) - parseFloat(principalPayment).toFixed(2);
+            // const endingPrincipal = Math.round(presentValue - principalPayment);
+
+            console.log('beginningprincipal', presentValue);
+            console.log('principalPayment', principalPayment)
+            console.log('endingPrincipal', endingPrincipal);
+            console.log('')
+            
+            
+            
             const homeValue = parseFloat(_purchasePrice) * Math.pow(1 + ((_appreciationRate / 100) / 12), month);
             const homeEquity = homeValue - endingPrincipal;
 
@@ -203,8 +222,16 @@ function Calculate({onCalculate}) {
             // const sellingCosts = (month === (yearsInHome * 12)) ? homeValue * (homeSellingCosts / 100) : 0;
             const sellingCosts = calculateSellingCosts(month, _yearsInHome, homeValue, _homeSellingCosts);
             
-            const netGainBeforeTaxes =  (sellingCosts > 0) ? ((parseFloat(_purchasePrice) + sellingCosts) - homeValue) : 0;
-            const netGainAfterTaxes =  (sellingCosts > 0) ? (netGainBeforeTaxes * (1 - _taxRate / 100)) : 0;
+            // sheet 2
+            // const netGainBeforeTaxes =  (sellingCosts > 0) ? ((parseFloat(_purchasePrice) + sellingCosts) - homeValue) : 0;
+            //sheet 5
+            const netGainBeforeTaxes =  (sellingCosts > 0) ? (homeValue - (parseFloat(endingPrincipal) + parseFloat(_downPayment) + sellingCosts)) : 0;
+            
+            //  sheet 2
+            //  const netGainAfterTaxes =  (sellingCosts > 0) ? (netGainBeforeTaxes * (1 - _taxRate / 100)) : 0;
+            //  sheet 5
+            const netGainAfterTaxes = (sellingCosts > 0) ? (netGainBeforeTaxes - ( netGainBeforeTaxes - _homeDeductionAtSale ) * (_taxRate / 100)) : 0;
+
             let totalHousingExpense = 0; 
 
             const totalMonths = yearsInHome * 12;
@@ -212,51 +239,60 @@ function Calculate({onCalculate}) {
             // array of total rent expense
             totalRentExpenseArray.push(totalRentExpense);
             if (month === totalMonths) {
-                totalHousingExpense = totalPayment + (maintenance/12) + netGainAfterTaxes;
+                // sheet 2
+                // totalHousingExpense = totalPayment + (maintenance/12) + netGainAfterTaxes;
+                totalHousingExpense = 0;
+            
             } else totalHousingExpense = totalPayment + (_maintenance/12);
             
             totalHousingExpenseArray.push(totalHousingExpense);
+            netBenefitArray.push(netGainAfterTaxes);
 
             results.push({
                 month,
-                rent: adjustedRent,
                 // rent: !isNaN(rent) && parseFloat(rent).toFixed(2),
+                rent: !isNaN(adjustedRent) && parseFloat(adjustedRent).toFixed(0),
                 insurance: !isNaN(insurance) && numberWithCommas(parseFloat(insurance).toFixed(0)),
                 interestOnDownPaymentSavings: !isNaN(interestOnDownPaymentSavings) && numberWithCommas(parseFloat(interestOnDownPaymentSavings).toFixed(2)),
                 interestOnSavingsPostTax: !isNaN(interestOnSavingsPostTax) && numberWithCommas(parseFloat(interestOnSavingsPostTax).toFixed(0)),
-                totalRentExpense: !isNaN(totalRentExpense) && numberWithCommas(parseFloat(totalRentExpense).toFixed(0)),
+                totalRentExpense: !isNaN(totalRentExpense) && numberWithCommas(parseFloat(totalRentExpense).toFixed(2)),
                 beginningPrincipal: !isNaN(presentValue) && numberWithCommas(parseFloat(presentValue).toFixed(2)),
                 interestPayment: !isNaN(interestPayment) && numberWithCommas(parseFloat(interestPayment).toFixed(0)),
-                principalPayment: !isNaN(principalPayment) && numberWithCommas(parseFloat(principalPayment).toFixed(0)),
+                principalPayment: !isNaN(principalPayment) && numberWithCommas(parseFloat(principalPayment).toFixed(2)),
                 principalAndInterestPayment: !isNaN(monthlyPayment) && numberWithCommas(parseFloat(monthlyPayment).toFixed(0)),
                 impounds: !isNaN(impounds) && numberWithCommas(parseFloat(impounds).toFixed(0)),
                 totalPayment: !isNaN(totalPayment) && numberWithCommas(parseFloat(totalPayment).toFixed(0)),
-                endingPrincipal: !isNaN(endingPrincipal) && parseFloat(endingPrincipal).toFixed(0),
+                endingPrincipal: !isNaN(endingPrincipal) && parseFloat(endingPrincipal),
                 maintenanceExpense: !isNaN(maintenance/12) && numberWithCommas(parseFloat(maintenance/12).toFixed(0)),
-                homeValue: !isNaN(homeValue) && numberWithCommas(parseFloat(homeValue).toFixed(2)),
-                homeEquity: !isNaN(homeEquity) && numberWithCommas(parseFloat(homeEquity).toFixed(2)),
-                sellingCosts: !isNaN(sellingCosts) && numberWithCommas(parseFloat(sellingCosts).toFixed(2)),
+                homeValue: !isNaN(homeValue) && numberWithCommas(parseFloat(homeValue).toFixed(0)),
+                homeEquity: !isNaN(homeEquity) && numberWithCommas(parseFloat(homeEquity).toFixed(0)),
+                sellingCosts: !isNaN(sellingCosts) && numberWithCommas(parseFloat(sellingCosts).toFixed(0)),
                 netGainBeforeTaxes: !isNaN(netGainBeforeTaxes) && numberWithCommas(parseFloat(netGainBeforeTaxes).toFixed(2)),
                 netGainAfterTaxes: !isNaN(netGainAfterTaxes) && numberWithCommas(parseFloat(netGainAfterTaxes).toFixed(2)),
-                totalHousingExpense: !isNaN(totalHousingExpense) && numberWithCommas(parseFloat(totalHousingExpense).toFixed(2)),
+                totalHousingExpense: !isNaN(totalHousingExpense) && numberWithCommas(parseFloat(totalHousingExpense).toFixed(0)),
             });
 
-            presentValue = endingPrincipal;
+            // presentValue = endingPrincipal;
         }
-
+        
         const costOfRenting = totalRentExpenseArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         const costOfBuying = totalHousingExpenseArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        let savingsByPurchasingOrRenting = 0;
+        const netBenefit = netBenefitArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const savingsByPurchasingOrRenting = Math.abs(parseFloat(netBenefit - costOfBuying) + parseFloat(costOfRenting - costOfBuying));
+        
+        // if(costOfRenting < costOfBuying) 
+        //     savingsByPurchasingOrRenting = numberWithCommas(parseFloat((costOfBuying - costOfRenting)).toFixed(0));
 
-        if(costOfRenting < costOfBuying) savingsByPurchasingOrRenting = numberWithCommas(parseFloat((costOfBuying - costOfRenting)).toFixed(0));
-        else if(costOfRenting > costOfBuying) savingsByPurchasingOrRenting = numberWithCommas(parseFloat((costOfRenting - costOfBuying)).toFixed(0));
+        // else if(costOfRenting > costOfBuying) 
+        //     savingsByPurchasingOrRenting = numberWithCommas(parseFloat((costOfRenting - costOfBuying)).toFixed(0));
         
         return {
             calculateMonthlyValues: results,
             summaryResultsValues: {
                 costOfRenting: numberWithCommas(parseFloat(costOfRenting).toFixed(0)),
                 costOfBuying: numberWithCommas(parseFloat(costOfBuying).toFixed(0)),
-                savingsByPurchasingOrRenting: savingsByPurchasingOrRenting
+                netBenefit: numberWithCommas(parseFloat(netBenefit - costOfBuying).toFixed(0)),
+                savingsByPurchasingOrRenting: numberWithCommas(parseFloat(savingsByPurchasingOrRenting).toFixed(0))
             }
         };
     };
@@ -693,6 +729,25 @@ function Calculate({onCalculate}) {
                                             className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                             required
                                         /> */}
+                                    </div>
+                                </div>
+                                <div className="bgFormField p-4 rounded-lg shadow-sm">
+                                    <label htmlFor="otherServices" className="block text-sm font-medium text-gray-600">
+                                        Home deduction (at sale)
+                                    </label>
+                                    <div className="relative mt-1 flex items-center">
+                                        <input
+                                            // type="number"
+                                            type="text"
+                                            id="homeDeductionAtSale"
+                                            name="homeDeductionAtSale"
+                                            value={formData.homeDeductionAtSale}
+                                            onChange={handleChange}
+                                            step={incrementedValue}
+                                            placeholder="Enter home deduction (at sale)"
+                                            className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                            required
+                                        />
                                     </div>
                                 </div>
                             </div>

@@ -15,6 +15,12 @@ function SummaryResults({ summaryResults }) {
                 </div>
 
                 <div className="flex justify-between text-lg font-medium">
+                    <span className="text-gray-600">Net Benefit / (Cost) of buying (with home appreciation):</span>
+                    <span className="text-gray-600">${summaryResults?.netBenefit}</span>
+                </div>
+                
+
+                <div className="flex justify-between text-lg font-medium">
                     <span className="text-gray-600">Decision:</span>
                     <span className="text-gray-600 font-semibold">More Beneficial to Purchase</span>
                 </div>
