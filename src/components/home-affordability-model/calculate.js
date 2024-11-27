@@ -4,36 +4,32 @@ import { interestRateData } from "./variables/data";
 
 const incrementedValue = 10000;
 
-
-
-
-
 function Calculate({onCalculate}) {
-    // const [formData, setFormData] = useState({
-    //     loanTerm: '0',
-    //     downPayment: '0',
-    //     interestRate: '0.000',
-    //     grossIncomeAnnual: '0',
-    //     debtPaymentsMonthly: '0',
-    //     debtToIncomeRatio: '0.00',
-    //     housingRatio: '0.00',
-    //     propertyTaxesAnnual: '0',
-    //     homeownersInsurance: '0',
-    //     hoaMonthly: '0'
-    // });
-
     const [formData, setFormData] = useState({
-        loanTerm: '30',
-        downPayment: '50,000',
-        interestRate: '5.000',
-        grossIncomeAnnual: '75,000',
-        debtPaymentsMonthly: '250',
-        debtToIncomeRatio: '36.00',
-        housingRatio: '28.00',
-        propertyTaxesAnnual: '3,250',
-        homeownersInsurance: '1,000',
+        loanTerm: '0',
+        downPayment: '0',
+        interestRate: '0.000',
+        grossIncomeAnnual: '0',
+        debtPaymentsMonthly: '0',
+        debtToIncomeRatio: '0.00',
+        housingRatio: '0.00',
+        propertyTaxesAnnual: '0',
+        homeownersInsurance: '0',
         hoaMonthly: '0'
     });
+
+    // const [formData, setFormData] = useState({
+    //     loanTerm: '30',
+    //     downPayment: '50,000',
+    //     interestRate: '5.000',
+    //     grossIncomeAnnual: '75,000',
+    //     debtPaymentsMonthly: '250',
+    //     debtToIncomeRatio: '36.00',
+    //     housingRatio: '28.00',
+    //     propertyTaxesAnnual: '3,250',
+    //     homeownersInsurance: '1,000',
+    //     hoaMonthly: '0'
+    // });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,54 +40,6 @@ function Calculate({onCalculate}) {
             [name]: formattedValue
         });
     };
-
-    const pvFunc = (rate, nper, pmt, fv = 0, type = 0) => {
-        if (rate === 0) {
-            return -((pmt * nper) + fv);
-        }
-        return (
-            -pmt * (1 + rate * type) * (1 - Math.pow(1 + rate, -nper)) / rate -
-            (fv * Math.pow(1 + rate, -nper))
-        );
-    };
-
-    // stackoverflow code
-    const trunc = (x, posiciones = 0) => {
-        var s = x.toString()
-        var l = s.length
-        var decimalLength = s.indexOf('.') + 1
-        var numStr = s.substr(0, decimalLength + posiciones)
-        return Number(numStr)
-    }
-      
-    const conv_number =(expr, decplaces) => {
-        var str = "" + Math.round(eval(expr) * Math.pow(10, decplaces));
-        while (str.length <= decplaces) {
-          str = "0" + str;
-        }
-        var decpoint = str.length - decplaces;
-        return (str.substring(0, decpoint) + "." + str.substring(decpoint, str.length));
-    }
-      
-    const pv =(rate, nper, pmt, fv = 0, type = 0) => {
-        console.log('rate, nper, pmt, fv', rate, nper, pmt, fv)
-        
-        let pv_value = 0;
-        let x = 0;
-        let y = 0;
-
-        if (rate == 0){ 
-          pv_value = -(fv + (pmt * nper));
-        } else {
-          x = Math.pow(1 + rate, -nper);
-          y = Math.pow(1 + rate, nper);
-          pv_value = -(x * (fv * rate - pmt + y * pmt)) / rate;
-        }
-        pv_value = conv_number(pv_value, 2);
-        return (trunc(pv_value*-1, 2));
-    }
-    // stackoverflow code
-
 
     // calculation
     const calculate = () => {
@@ -113,38 +61,23 @@ function Calculate({onCalculate}) {
         const _interestRate = parseFloat(removeCommas(interestRate));
         const _grossIncomeAnnual = parseFloat(removeCommas(grossIncomeAnnual));
         const _debtPaymentsMonthly = parseFloat(removeCommas(debtPaymentsMonthly));
-        const _debtToIncomeRatio = parseFloat(removeCommas(debtToIncomeRatio)) / 100;
-        const _housingRatio = parseFloat(removeCommas(housingRatio)) / 100;
+        const _debtToIncomeRatio = parseFloat(removeCommas(debtToIncomeRatio));
+        const _housingRatio = parseFloat(removeCommas(housingRatio));
         const _propertyTaxesAnnual = parseFloat(removeCommas(propertyTaxesAnnual));
         const _homeownersInsurance = parseFloat(removeCommas(homeownersInsurance));
         const _hoaMonthly = parseFloat(removeCommas(hoaMonthly));
-        
-        const monthlyGrossIncome = _grossIncomeAnnual / 12;
-        const maxTotalDebtPayments = monthlyGrossIncome * _debtToIncomeRatio;
-        const maxHousingPayment = maxTotalDebtPayments - _debtPaymentsMonthly;
-        const monthlyPropertyTaxes = _propertyTaxesAnnual / 12;
-        const monthlyHomeownersInsurance = _homeownersInsurance / 12;
-        const monthlyTI = monthlyPropertyTaxes + monthlyHomeownersInsurance + _hoaMonthly;
-        const monthlyPI = maxHousingPayment - monthlyTI;
-        const monthlyInterestRate = _interestRate / 100 / 12;
-        const numberOfPayments = _loanTerm * 12;
-        
-        const presentValue = -pv(monthlyInterestRate, numberOfPayments, -monthlyPI);
 
-        const homeCosting = presentValue + _downPayment;
-
-        console.log("Loan Amount:", presentValue);
-        console.log("Total Home Price:", homeCosting);
-        console.log("Monthly P&I Payment:", monthlyPI);
-        console.log("Monthly T&I Payment:", monthlyTI);
-        console.log("Total Monthly Payment (PITI):", maxHousingPayment);
+        const homeCosting = ((_grossIncomeAnnual - (_propertyTaxesAnnual + _homeownersInsurance + _hoaMonthly)) / 12 * (_housingRatio / 100)) * (1 - Math.pow(1 + (_interestRate/100) / 12, (-_loanTerm * 12))) / ((_interestRate / 100) / 12);
+        const monthlyPI = ((((_grossIncomeAnnual-(_propertyTaxesAnnual + _homeownersInsurance + _hoaMonthly))/12*(_housingRatio / 100)) * (1 - Math.pow(1 + (_interestRate/100) / 12, (-_loanTerm * 12))) / ((_interestRate / 100)/12) - _downPayment) * ((_interestRate / 100)/12)) / (1 - Math.pow(1 + (_interestRate/100) / 12, (-_loanTerm * 12)));
+        const monthlyTI = (_propertyTaxesAnnual + _homeownersInsurance + _hoaMonthly) / 12;
+        const maxHousingPayment = ((((_grossIncomeAnnual-(_propertyTaxesAnnual + _homeownersInsurance + _hoaMonthly))/12*(_housingRatio / 100)) * (1 - Math.pow(1+(_interestRate / 100)/12, (-_loanTerm*12)))/((_interestRate / 100)/12) - _downPayment) * ((_interestRate / 100)/12))  /  (1-Math.pow((1+(_interestRate / 100)/12), -(_loanTerm * 12)))  +  (_propertyTaxesAnnual + _homeownersInsurance + _hoaMonthly)/12;
 
         return {
             summaryResultsValues: {
-                homeCosting: Math.round(homeCosting),
-                monthlyPI: Math.round(monthlyPI),
-                monthlyTI: Math.round(monthlyTI),
-                maxHousingPayment: Math.round(maxHousingPayment)
+                homeCosting: !isNaN(homeCosting) ? numberWithCommas(Math.round(homeCosting)) : 0,
+                monthlyPI: !isNaN(monthlyPI) ? numberWithCommas(Math.round(monthlyPI)) : 0,
+                monthlyTI: !isNaN(monthlyTI) ? numberWithCommas(Math.round(monthlyTI)) : 0,
+                maxHousingPayment: !isNaN(maxHousingPayment) ? numberWithCommas(Math.round(maxHousingPayment)) : 0
             }
         };
     }
