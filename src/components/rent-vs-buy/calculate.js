@@ -143,8 +143,8 @@ function Calculate({onCalculate}) {
         
         /*** Actual ***/
         // const loanAmount = parseFloat(purchasePrice) - parseFloat(downPayment);
-        const loanAmount = (parseFloat(_purchasePrice) - parseFloat(_downPayment)) 
-                   * (1 + parseFloat(_discountPoints) / 100) 
+        const loanAmount = (parseFloat(_purchasePrice) - parseFloat(_downPayment))
+                   * (1 + parseFloat(_discountPoints) / 100)
                    + parseFloat(_originationCharge);
         
         /*** Actual ***/
@@ -207,13 +207,6 @@ function Calculate({onCalculate}) {
 
             const endingPrincipal = parseFloat(presentValue).toFixed(2) - parseFloat(principalPayment).toFixed(2);
             // const endingPrincipal = Math.round(presentValue - principalPayment);
-
-            console.log('beginningprincipal', presentValue);
-            console.log('principalPayment', principalPayment)
-            console.log('endingPrincipal', endingPrincipal);
-            console.log('')
-            
-            
             
             const homeValue = parseFloat(_purchasePrice) * Math.pow(1 + ((_appreciationRate / 100) / 12), month);
             const homeEquity = homeValue - endingPrincipal;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { numberWithCommas, removeCommas } from "../../helper";
+import { numberWithCommas, removeCommas, loanTermData, debtToIncomeRatioData, housingRatioData, formatNumberWithPercentage } from "../../helper";
 import { interestRateData } from "./variables/data";
 
 const incrementedValue = 10000;
@@ -31,9 +31,12 @@ function Calculate({onCalculate}) {
     //     hoaMonthly: '0'
     // });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        const formattedValue = numberWithCommas(value);
+    const handleChange = (e, statement) => {
+        let { name, value } = e.target;
+        let formattedValue = numberWithCommas(value);
+
+        if ( statement === 'percent' ) formattedValue = formatNumberWithPercentage(value);
+
         setFormData({
             ...formData,
             // [name]: value
@@ -98,7 +101,15 @@ function Calculate({onCalculate}) {
                             <div className="bgFormField p-4 rounded-lg shadow-sm">
                                 <label htmlFor="loanTerm" className="block text-sm font-medium text-gray-600">Loan Term (years)</label>
                                 <div className="relative mt-1 flex items-center">
-                                    <input
+                                    <select
+                                        id="loanTerm"
+                                        name="loanTerm"
+                                        value={formData.loanTerm}
+                                        onChange={handleChange}
+                                        className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                        required>{loanTermData()?.map((item) => (<option value={item}>{item}</option>))}
+                                    </select>
+                                    {/* <input
                                         type="text"
                                         id="loanTerm"
                                         name="loanTerm"
@@ -108,7 +119,7 @@ function Calculate({onCalculate}) {
                                         placeholder="Enter monthly loanTerm"
                                         className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                         required
-                                    />
+                                    /> */}
                                 </div>
                             </div>
                             <div className="bgFormField p-4 rounded-lg shadow-sm">
@@ -179,7 +190,7 @@ function Calculate({onCalculate}) {
                                         value={formData.debtPaymentsMonthly}
                                         onChange={handleChange}
                                         step={incrementedValue}
-                                        placeholder="Gross Income Annual"
+                                        placeholder="Debt Payments (monthly)"
                                         className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                         required
                                     />
@@ -190,7 +201,7 @@ function Calculate({onCalculate}) {
                                     Debt-to-Income Ratio
                                 </label>
                                 <div className="relative mt-1 flex items-center">
-                                    <input
+                                    {/* <input
                                         type="text"
                                         id="debtToIncomeRatio"
                                         name="debtToIncomeRatio"
@@ -200,7 +211,25 @@ function Calculate({onCalculate}) {
                                         placeholder="Gross Income Annual"
                                         className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                         required
+                                    /> */}
+                                    
+                                    <input
+                                        type="text"
+                                        id="debtToIncomeRatio"
+                                        name="debtToIncomeRatio"
+                                        value={formData.debtToIncomeRatio}
+                                        onChange={(event) => {handleChange(event, 'percent')}}
+                                        step={incrementedValue}
+                                        placeholder="Enter Debt-to-Income Ratio"
+                                        className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                        required
+                                        list="debtToIncomeRatioOptions"
                                     />
+                                    <datalist id="debtToIncomeRatioOptions">
+                                        {debtToIncomeRatioData()?.map((rate, index) => (
+                                            <option key={index} value={rate + '%'} />
+                                        ))}
+                                    </datalist>
                                 </div>
                             </div>
                             <div className="bgFormField p-4 rounded-lg shadow-sm">
@@ -208,7 +237,7 @@ function Calculate({onCalculate}) {
                                     Housing Ratio
                                 </label>
                                 <div className="relative mt-1 flex items-center">
-                                    <input
+                                    {/* <input
                                         type="text"
                                         id="housingRatio"
                                         name="housingRatio"
@@ -218,7 +247,25 @@ function Calculate({onCalculate}) {
                                         placeholder="Gross Income Annual"
                                         className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
                                         required
+                                    /> */}
+
+                                    <input
+                                        type="text"
+                                        id="housingRatio"
+                                        name="housingRatio"
+                                        value={formData.housingRatio}
+                                        onChange={(event) => {handleChange(event, 'percent')}}
+                                        step={incrementedValue}
+                                        placeholder="Enter Housing Ratio"
+                                        className="block w-full border border-gray-300 rounded-lg py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                        required
+                                        list="housingRatioOptions"
                                     />
+                                    <datalist id="housingRatioOptions">
+                                        {housingRatioData()?.map((rate, index) => (
+                                            <option key={index} value={rate + '%'} />
+                                        ))}
+                                    </datalist>
                                 </div>
                             </div>
                         </div>
