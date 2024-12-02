@@ -4,8 +4,8 @@ function List({ results }) {
             {
                 results?.length > 0 ? (
                     <>
-                        <div className="p-4 bg-white rounded-lg shadow-md border border-gray-200 overflow-auto" style={{height: '800px'}}>
-                            <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">Loan Scenario Comparison Detail</h1>
+                        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-auto" style={{height: '800px'}}>
+                            <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center mt-4">Loan Scenario Comparison Detail</h1>
                             <table className="min-w-full border border-gray-300 rounded-lg ">
                                 <thead className="bg-gray-50">
                                     <tr className="bgSecondary text-white">

@@ -54,6 +54,7 @@ function Calculate({onCalculate}) {
 
         const results = [];
         const months = _loanTerm * 12;
+        const interestPaymentArr = [];
         
         let beginningUpb = 0;
         let interestPayment = 0;
@@ -90,6 +91,9 @@ function Calculate({onCalculate}) {
             if (month === 1) cummulativePrincipalPaid = principalPayment;
             else cummulativePrincipalPaid = parseFloat(removeCommas(results[month-2]?.cummulativePrincipalPaid)) + principalPayment;
 
+            console.log('cummulativeInterestPaid', cummulativeInterestPaid)
+            interestPaymentArr.push(interestPayment);
+
             const result = {
                 month: month,
                 beginningUpb: numberWithCommas(parseFloat(beginningUpb).toFixed(2)),
@@ -104,11 +108,14 @@ function Calculate({onCalculate}) {
             };
 
             results.push(result);
-
-            // console.log(result);
         }
 
-        return results;
+        const cummulativeInterest = interestPaymentArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        return {
+            cummulativeInterest: numberWithCommas(parseFloat(cummulativeInterest).toFixed(2)),
+            results: results
+        };
     }
 
     useEffect(() => {
