@@ -6,16 +6,16 @@ const incrementedValue = 10000;
 
 function Calculate({onCalculate}) {
     const [formData, setFormData] = useState({
-        loanTerm: '0',
-        downPayment: '0',
-        interestRate: '0.000',
-        grossIncomeAnnual: '0',
-        debtPaymentsMonthly: '0',
-        debtToIncomeRatio: '0.00',
-        housingRatio: '0.00',
-        propertyTaxesAnnual: '0',
-        homeownersInsurance: '0',
-        hoaMonthly: '0'
+        loanTerm: '10',
+        downPayment: 0,
+        interestRate: '3.000',
+        grossIncomeAnnual: 0,
+        debtPaymentsMonthly: 0,
+        debtToIncomeRatio: 0,
+        housingRatio: 0,
+        propertyTaxesAnnual: 0,
+        homeownersInsurance: 0,
+        hoaMonthly: 0
     });
 
     // const [formData, setFormData] = useState({

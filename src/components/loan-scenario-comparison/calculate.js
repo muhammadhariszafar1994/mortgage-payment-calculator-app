@@ -3,11 +3,11 @@ import { numberWithCommas, removeCommas, loanTermData } from "../../helper";
 
 function Calculate({onCalculate}) {
     const [formData, setFormData] = useState({
-        loanTerm: '0',
-        interestRate: '0.00',
-        loanAmount: '0',
-        hoa: '0.00',
-        insurance: '0.00'
+        loanTerm: '10',
+        interestRate: 0.00,
+        loanAmount: 0,
+        hoa: 0.00,
+        insurance: 0.00
     });
 
     // const [formData, setFormData] = useState({

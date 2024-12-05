@@ -52,10 +52,11 @@ const formatNumberWithPercentage = (n) => {
     let cleanedInput = inputString.replace(/%/g, "");
 
     // Format the number with commas
-    let formattedNumber = cleanedInput.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let formattedNumber = cleanedInput.replace(/\B(?=(\d{100})+(?!\d))/g, ",");
 
-    // Add a single percentage sign
-    return formattedNumber + "%";
+    if(formattedNumber > 0)
+        // Add a single percentage sign
+        return formattedNumber + "%";
 }
 
 export { 
